@@ -1,0 +1,41 @@
+<a href="/">Home</a>
+<body class="text-center">
+<div class="container p-3 my-3">
+    <h2>Register with us!</h2>
+    <div id="err_con" class="alert alert-warning alert-dismissible fade show" role="alert" style="display:none">
+        <p id="error_msg"></p>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <form action="/users/register" method="POST">
+        <div class="form-group">
+            <input type="name" class="form-control" id="first_name" placeholder="Enter first name" name="first_name"
+                   value="<%= typeof name != 'undefined' ? first_name : '' %>">
+        </div>
+        <div class="form-group">
+            <input type="name" class="form-control" id="last_name" placeholder="Enter surname" name="last_name"
+                   value="<%= typeof name != 'undefined' ? last_name : '' %>">
+        </div>
+        <div class="form-group">
+            <input type="email" class="form-control" id="email" placeholder="Enter email" name="email"
+                   value="<%= typeof email != 'undefined' ? password : '' %>">
+        </div>
+        <div class="form-group">
+            <input type="password" class="form-control" id="password" placeholder="Enter password" name="password"
+                   value="<%= typeof email != 'undefined' ? password : '' %>">
+        </div>
+        <div class="form-group">
+            <input type="password" class="form-control" id="password2" placeholder="Re-enter password" name="password2"
+                   value="<%= typeof password != 'undefined' ? password2 : '' %>">
+        </div>
+        <div class="form-group form-check">
+            <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" name="remember"> Remember me
+            </label>
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+    <a href="/users/login">Log In</a>
+</div>
+</body>
