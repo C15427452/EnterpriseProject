@@ -1,104 +1,133 @@
-const express = require('express')
-const router = express.Router()
-const bcrypt = require('bcryptjs')
-const passport = require('passport')
-var mongodb = require('mongodb');
-const {validationResult} = require('express-validator');
+//importing libraries needed
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcryptjs');
+const passport = require('passport');
+const mongodb = require('mongodb');
 
 //User model
-const User = require('../models/User')
+const User = require('../models/User');
 
 //Login page
-router.get('/login', (req, res) => res.render('login', {msg: res.error}))
+router.get('/login', function(req, res) {
 
-//Logout page
+    res.render('login', {msg: res.error})
+})
+
+//Logout method
 router.get('/logout', (req, res) => {
     req.logout();
-    console.log("User logged out")
+    console.log("User logged out");
     res.redirect('/')
 })
 
-//Register page
+//Register method
 router.get('/register', (req, res) => res.render('register', {msg: res.error}))
 
-//Delete Account
+//Delete Account method
 router.get('/delete', (req, res) => {
     //User.deleteOne(req.user._id)
     User.deleteOne({_id: new mongodb.ObjectID(req.user._id)})
         .then(user => {
-            console.log("Goodbye :" + req.user.first_name)
-            res.redirect('/')
+            console.log("Goodbye :" + req.user.first_name);
+            res.redirect('/') //one account deleted go to home
         })
         .catch(err => console.log(err))
 })
 
-//Update Account
+//Update Account method
 router.get('/update', (req, res) => {
 
+    //passing information from database to profile page
     res.render('editProfile', {
         first_name: req.user.first_name,
         last_name: req.user.last_name,
         email: req.user.email,
     });
-    console.log(req.user._id)
 })
+
+//Update Profile handler
 router.post('/edit', function (req, res, next) {
 
-    //console.log(req.user._id) //console like this
-
+    //updates html form body and updates to user id
     User.updateOne({_id: req.user._id}, {$set: req.body}, function (err){
         if (err) console.log(err);
-        res.redirect('/')
+        res.redirect('/profile') //redirecting to profile page
     });
 })
 
-//Handlers
+//Register handler
 router.post('/register', (req, res) => {
+    //getting form data
     const {first_name, last_name, email, password, password2} = req.body
-    let error = ''
 
-    let errors = []
+    let error = '';
+
     //check required fields
     if(!first_name || !last_name || !email || !password || !password2){
-        error = 'Please fill out all fields'
-        res.render('register', {msg:error})
+        error = 'Please fill out all fields';
+        //passing in error and input that was filled
+        res.render('register', {msg:error,
+            first_name,
+            last_name,
+            email})
     }
     //check if passwords match
     else if(password2 !== password){
-        error = 'Passwords do not match'
-        res.render('register', {msg:error})
+        error = 'Passwords do not match';
+        //passing in error and input that was filled
+        res.render('register', {msg:error,
+            first_name,
+            last_name,
+            email})
     }
     //check password length
     else if(password.length < 6){
-        error = 'Password must be at least 6 characters'
-        res.render('register', {msg:error})
+        error = 'Password must be at least 6 characters';
+        //passing in error and input that was filled
+        res.render('register', {msg:error,
+            first_name,
+            last_name,
+            email})
     }
     else{
+        //checking if email already exists in db
         User.findOne({email: email})
             .then(user => {
+                //if user exists
                 if(user){
-                    console.log('User exists')
-                    error = 'An account with this email address already exists'
-                    res.render('register', {msg:error})
+                    error = 'An account with this email address already exists';
+                    //passing in error and input that was filled
+                    res.render('register', {msg:error,
+                        first_name,
+                        last_name,
+                        email})
                 }
                 else{
+                    //if user doesnt exists create new one
+                    //passing data to user model
                     const newUser = new User({
                         first_name,
                         last_name,
                         email,
                         password
                     });
-                    //hash password
+                    //hashing password for security purposes
+                    //encrypting password with library
                     bcrypt.genSalt(10, (err, salt) =>
                         bcrypt.hash(newUser.password, salt, (err, hash) =>  {
                             if(err) throw err;
 
+                            //setting password as hashed one
                             newUser.password = hash;
 
+                            //save information to user model
                             newUser.save()
                                 .then(user => {
-                                    console.log("You are now registered")
-                                    res.redirect('/users/login')
+                                    console.log("You are now registered");
+                                    //redirect user to login and display message
+                                    error = 'You are successfully registered please log in';
+                                    res.render('login', {msg:error})
                                 })
                                 .catch(err => console.log(err))
                     }))
@@ -107,7 +136,9 @@ router.post('/register', (req, res) => {
     }
 })
 
+//Login handler
 router.post('/login', (req, res, next) => {
+    //using passport library to handle authentication when logging in
     passport.authenticate('local', {
         successRedirect: '/profile',
         failureRedirect: '/users/login',
@@ -115,4 +146,4 @@ router.post('/login', (req, res, next) => {
     })(req, res, next);
 });
 
-module.exports = router
+module.exports = router;
