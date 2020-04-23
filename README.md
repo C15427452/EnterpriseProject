@@ -10,3 +10,4 @@ Initial submission : https://youtu.be/cAuUxouKNkM
 After submission changes that were made are as follows:
 * Register div alerts were added
 * Proper commenting of code was done
+* Minor styling adjustments
