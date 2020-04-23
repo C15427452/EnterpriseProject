@@ -9,6 +9,7 @@ module.exports = function(passport) {
     passport.use(
         new LocalStrategy({usernameField: 'email'}, (email, password, done) => {
             //find user
+            let error = ''
             User.findOne({email: email})
                 .then(user => {
                     if (!user) {

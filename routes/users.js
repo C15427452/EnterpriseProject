@@ -3,12 +3,13 @@ const router = express.Router()
 const bcrypt = require('bcryptjs')
 const passport = require('passport')
 var mongodb = require('mongodb');
+const {validationResult} = require('express-validator');
 
 //User model
 const User = require('../models/User')
 
 //Login page
-router.get('/login', (req, res) => res.render('login'))
+router.get('/login', (req, res) => res.render('login', {msg: res.error}))
 
 //Logout page
 router.get('/logout', (req, res) => {
@@ -18,7 +19,7 @@ router.get('/logout', (req, res) => {
 })
 
 //Register page
-router.get('/register', (req, res) => res.render('register'))
+router.get('/register', (req, res) => res.render('register', {msg: res.error}))
 
 //Delete Account
 router.get('/delete', (req, res) => {
@@ -47,34 +48,38 @@ router.post('/edit', function (req, res, next) {
 
     User.updateOne({_id: req.user._id}, {$set: req.body}, function (err){
         if (err) console.log(err);
-        res.render('home', {
-            user: req.user
-        });
+        res.redirect('/')
     });
 })
 
 //Handlers
 router.post('/register', (req, res) => {
     const {first_name, last_name, email, password, password2} = req.body
+    let error = ''
 
+    let errors = []
     //check required fields
     if(!first_name || !last_name || !email || !password || !password2){
-        console.log('Please fill out all field')
+        error = 'Please fill out all fields'
+        res.render('register', {msg:error})
     }
     //check if passwords match
-    if(password !== password2){
-        console.log('Passwords do not match')
+    else if(password2 !== password){
+        error = 'Passwords do not match'
+        res.render('register', {msg:error})
     }
     //check password length
-    if(password.length < 6){
-        console.log('Password must be at least 6 characters')
+    else if(password.length < 6){
+        error = 'Password must be at least 6 characters'
+        res.render('register', {msg:error})
     }
     else{
         User.findOne({email: email})
             .then(user => {
                 if(user){
                     console.log('User exists')
-                    res.render('register')
+                    error = 'An account with this email address already exists'
+                    res.render('register', {msg:error})
                 }
                 else{
                     const newUser = new User({

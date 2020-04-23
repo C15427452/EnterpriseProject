@@ -2,12 +2,18 @@
 <body class="text-center">
 <div class="container p-3 my-3">
     <h2>Register with us!</h2>
+    <% if (msg) { %>
+        <div class="alert alert-danger" role="alert" id="errorMsg">
+            <%= msg %>
+        </div>
+    <% } %>
     <div id="err_con" class="alert alert-warning alert-dismissible fade show" role="alert" style="display:none">
         <p id="error_msg"></p>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
+    <div id="div1"></div>
     <form action="/users/register" method="POST">
         <div class="form-group">
             <input type="name" class="form-control" id="first_name" placeholder="Enter first name" name="first_name"
@@ -34,7 +40,7 @@
                 <input class="form-check-input" type="checkbox" name="remember"> Remember me
             </label>
         </div>
-        <button type="submit" class="btn btn-primary">Register</button>
+        <button id="register" type="submit" class="btn btn-primary">Register</button>
     </form>
     <a href="/users/login">Log In</a>
 </div>
