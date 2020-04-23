@@ -6,3 +6,7 @@ To run Project
 *  navigate to : http://localhost:4000 (this is the initial home page)
 
 Initial submission : https://youtu.be/cAuUxouKNkM
+
+After submission changes that were made are as follows:
+* Register div alerts were added
+* Proper commenting of code was done
