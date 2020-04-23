@@ -1,18 +1,14 @@
 <head>
     <style>
         * {box-sizing: border-box}
-        body {font-family: Verdana, sans-serif; margin:0}
-        .mySlides {display: none}
         img {vertical-align: middle;}
 
-        /* Slideshow container */
-        .slideshow-container {
+        .container-slides {
             max-width: 1000px;
             position: relative;
             margin: auto;
         }
 
-        /* Next & previous buttons */
         .prev, .next {
             cursor: pointer;
             position: absolute;
@@ -28,20 +24,16 @@
             user-select: none;
         }
 
-        /* Position the "next button" to the right */
         .next {
             right: 0;
             border-radius: 3px 0 0 3px;
         }
 
-        /* On hover, add a black background color with a little bit see-through */
         .prev:hover, .next:hover {
             background-color: rgba(0,0,0,0.8);
         }
 
-        /* Caption text */
         .text {
-            color: #f2f2f2;
             font-size: 15px;
             padding: 8px 12px;
             position: absolute;
@@ -49,7 +41,6 @@
             width: 100%;
             text-align: center;
         }
-        /* Fading animation */
         .fade {
             -webkit-animation-name: fade;
             -webkit-animation-duration: 1.5s;
@@ -105,10 +96,10 @@
 </div>
 <br>
 <h2 class="text-center">Most Popular Movies</h2>
-<div class="slideshow-container">
+<div class="container-slides">
     <br>
     <% movies.forEach(function(movie) { %>
-        <div class="mySlides fade" style="text-align: center">
+        <div class="slides fade" style="text-align: center">
             <div style="height: 500px">
                 <img src="<%= movie.poster_path %>" class="rounded" style="width:20%">
             </div>
@@ -123,26 +114,26 @@
 </div>
 <br>
 <script>
-    var slideIndex = 1;
-    showSlides(slideIndex);
+    let indexS = 1;
+    showSlides(indexS);
 
     function plusSlides(n) {
-        showSlides(slideIndex += n);
+        showSlides(indexS += n);
     }
 
     function currentSlide(n) {
-        showSlides(slideIndex = n);
+        showSlides(indexS = n);
     }
 
     function showSlides(n) {
-        var i;
-        var slides = document.getElementsByClassName("mySlides");
-        if (n > slides.length) {slideIndex = 1}
-        if (n < 1) {slideIndex = slides.length}
+        let i;
+        let slides = document.getElementsByClassName("slides");
+        if (n > slides.length) {indexS = 1}
+        if (n < 1) {indexS = slides.length}
         for (i = 0; i < slides.length; i++) {
             slides[i].style.display = "none";
         }
-        slides[slideIndex-1].style.display = "block";
+        slides[indexS-1].style.display = "block";
     }
 </script>
 
